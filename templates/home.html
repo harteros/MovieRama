@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block header %}
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">MovieRama</a>
+            <div class="navbar-nav text-light align-items-center">
+                {% if user.is_authenticated %}
+                    Hi {{ user }}
+                    <a class="mx-3" href="{% url 'accounts:logout' %}">Log Out</a>
+                {% else %}
+                    <a class="mx-3" href="{% url 'accounts:login' %}">Log In</a>
+                    or
+                    <a class="mx-3 btn btn-primary" href="{% url 'accounts:register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

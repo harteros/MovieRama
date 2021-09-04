@@ -1,0 +1,27 @@
+{% extends 'home.html' %}
+
+{% block title %}Add Movie{% endblock %}
+
+{% block content %}
+
+    <div class="row mt-4">
+        <div class="col">
+            <form action="{% url 'movies:add_movie' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-12">
+                        <label class="form-label">Movie name </label>
+                        <input class="form-control" type="text" name="title">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Movie description </label>
+                        <textarea class="form-control" name="desc"></textarea>
+                    </div>
+                    <div class="col-12 my-4 text-center">
+                        <button class="btn btn-primary" type="submit">Add Movie</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

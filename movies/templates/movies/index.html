@@ -1,0 +1,145 @@
+{% extends 'home.html' %}
+
+{% block content %}
+
+    <!--------------------------------Navbar for movie ordering--------------------------------->
+
+    <nav class="nav my-4 border border-dark p-1">
+        <span class="navbar-text">Order by:</span>
+        {% if user_id %}
+            <a class="nav-link" href="{% url 'movies:sort_user_movies' user_id 'pub_date' %}">date</a>
+            <div class="vr"></div>
+            <a class="nav-link" href="{% url 'movies:sort_user_movies' user_id 'likes' %}">like</a>
+            <div class="vr"></div>
+            <a class="nav-link" href="{% url 'movies:sort_user_movies' user_id 'hates' %}">hate</a>
+        {% else %}
+            <a class="nav-link" href="{% url 'movies:sort_movies' 'pub_date' %}">date</a>
+            <div class="vr"></div>
+            <a class="nav-link" href="{% url 'movies:sort_movies' 'likes' %}">like</a>
+            <div class="vr"></div>
+            <a class="nav-link" href="{% url 'movies:sort_movies' 'hates' %}">hate</a>
+        {% endif %}
+    </nav>
+    <!--------------------------------End navbar--------------------------------->
+
+    <!--------------------------------Movies list--------------------------------->
+
+    <div class="row">
+        <div class="col">
+            {% for movie in movies %}
+                <!--------------------------------Movie details--------------------------------->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-substitle">
+                            Posted by
+                            {% if movie.user == user %}
+                                <a href="{% url 'movies:user_movies' movie.user.id %}">You</a>
+                                {{ movie.days_ago }} days ago
+                            {% else %}
+                                <a href="{% url 'movies:user_movies' movie.user.id %}">{{ movie.user }}</a>
+                                {{ movie.days_ago }} days ago
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ movie.desc }}</p>
+
+                        <!--------------------------------Movie like/hate variations--------------------------------->
+
+                        <div class="row">
+                            <div class="col-auto">
+                                <form action="{% url 'movies:react_to_movie' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                                    {% if user == movie.user %}
+                                        <button class="btn text-decoration-underline align-baseline" name="like_btn"
+                                                type="submit"
+                                                disabled>{{ movie.count_likes }} Likes
+                                        </button>
+                                        <button class="btn text-decoration-underline align-baseline" name="hate_btn"
+                                                type="submit"
+                                                disabled>{{ movie.count_hates }} Hates
+                                        </button>
+                                    {% else %}
+                                        {% if user in movie.likes.all %}
+                                            <button class="btn text-decoration-underline align-baseline" name="like_btn"
+                                                    type="submit"
+                                                    disabled>{{ movie.count_likes }} Likes
+                                            </button>
+                                        {% else %}
+                                            <button class="btn text-decoration-underline align-baseline" name="like_btn"
+                                                    type="submit">{{ movie.count_likes }} Likes
+                                            </button>
+                                        {% endif %}
+                                        {% if user in movie.hates.all %}
+                                            <button class="btn text-decoration-underline align-baseline" name="hate_btn"
+                                                    type="submit"
+                                                    disabled>{{ movie.count_hates }}
+                                                Hates
+                                            </button>
+                                        {% else %}
+                                            <button class="btn text-decoration-underline align-baseline" name="hate_btn"
+                                                    type="submit">{{ movie.count_hates }} Hates
+                                            </button>
+                                        {% endif %}
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <div class="col text-end">
+                                <form action="{% url 'movies:react_to_movie' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                                    {% if user in movie.likes.all %}
+                                        <div class="row justify-content-end align-items-center">
+                                            <div class="col-auto">
+                                                You like this movie
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="vr"></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button class="btn text-decoration-underline" name="like_btn"
+                                                        type="submit">
+                                                    Unlike
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if user in movie.hates.all %}
+                                        <div class="row justify-content-end align-items-center">
+                                            <div class="col-auto">
+                                                You hate this movie
+                                            </div>
+                                            <div class="col-auto">
+                                                <div class="vr"></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button class="btn text-decoration-underline align-baseline"
+                                                        name="hate_btn"
+                                                        type="submit">
+                                                    Unhate
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                        <!--------------------------------End movie like/hate variations------------------------------>
+                    </div>
+                </div>
+                <!--------------------------------End movie details--------------------------------->
+            {% endfor %}
+        </div>
+        <!--------------------------------End movies list--------------------------------->
+
+        <!--------------------------------Add new movie--------------------------------->
+
+        <div class="col-auto">
+            {% if user.is_authenticated %}
+                <a class="btn btn-success" href="{% url 'movies:add_movie' %}">Add Movie</a>
+            {% endif %}
+        </div>
+
+        <!--------------------------------End add new movie--------------------------------->
+    </div>
+{% endblock %}
