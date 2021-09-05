@@ -9,11 +9,11 @@
 
 2. Open pgAdmin and create a `Login/Group role` with `Name: admin` , `Password: admin` and privileges as seen in the image
 
-<img alt="alt text" height="200" src="installation/privileges.png" width="200"/>
+<img alt="alt text" src="installation/privileges.png" width="400"/>
 
 3. Create a Database with `Name : MovieRama` and `Owner: admin` which represents the user we just created
 
-<img alt="alt text" height="200" src="installation/createDB.png" width="200"/>
+<img alt="alt text" src="installation/createDB.png" width="400"/>
 
 
 ## Project setup
