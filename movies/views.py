@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
@@ -80,19 +80,21 @@ def react_to_movie(request):
     if request.method == "POST":
         movie_id = request.POST.get('movie_id')
         movie = Movie.objects.get(pk=movie_id)
-        if 'like_btn' in request.POST:
-            if request.user in movie.likes.all():
-                movie.likes.remove(request.user)
-            else:
-                movie.likes.add(request.user)
-                movie.hates.remove(request.user)
-        elif 'hate_btn' in request.POST:
-            if request.user in movie.hates.all():
-                movie.hates.remove(request.user)
-            else:
-                movie.hates.add(request.user)
-                movie.likes.remove(request.user)
-        return HttpResponseRedirect(reverse('movies:movie_list'))
+        if movie.user != request.user:
+            if 'like_btn' in request.POST:
+                if request.user in movie.likes.all():
+                    movie.likes.remove(request.user)
+                else:
+                    movie.likes.add(request.user)
+                    movie.hates.remove(request.user)
+            elif 'hate_btn' in request.POST:
+                if request.user in movie.hates.all():
+                    movie.hates.remove(request.user)
+                else:
+                    movie.hates.add(request.user)
+                    movie.likes.remove(request.user)
+            return HttpResponseRedirect(reverse('movies:movie_list'))
+    return HttpResponse(status=204)
 
 
 @login_required(login_url='/accounts/login/')
